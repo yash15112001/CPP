@@ -66,172 +66,47 @@ template<class T,class V>void _print(map<T,V> s){ cerr<<"[ "; for(auto i:s){ cer
 template<class T,class V>void _print(unordered_map<T,V> s){ cerr<<"[ "; for(auto i:s){ cerr<<"{";_print(i.f); cerr<<","; _print(i.s); cerr<<"} "; } cerr<<"]"; }
 template<class T,class V>void _print(multimap<T,V> s){ cerr<<"[ "; for(auto i:s){ cerr<<"{";_print(i.f); cerr<<","; _print(i.s); cerr<<"} "; } cerr<<"]"; }
 
-// ************ TRIE **************
+const int N = 1e5+5;
+vector<int> segtree(N,int_max);
 
-class node{
-public:
-	char data;
-	node* c[26];
-	int cc;
-	bool end;
-
-	node(char ch){
-		data = ch;
-		fr(i,0,26) c[i]=null;
-		cc=0;
-		end = false;
+int finder(int node,int s,int e,int l,int r){
+	if(r<s || l>e) return int_min;
+	if(s==e) return segtree[node];	
+	if(l<=s && e<=r) return segtree[node];
+	else{
+		int m = (s+e)/2;
+		int l = finder(2*node+1,s,m,l,r);
+		int r = finder(2*node+2,m+1,e,l,r);
+		return max(l,r);
 	}
-};
+}
 
-class Trie{
-	public:
-	node* root;
-
-	Trie(){
-		root = new node('\0');
+void build(vector<int>& v,int node,int s,int e){
+	if(s==e){
+		segtree[node]=v[s];
+		return;
 	}
-
-	Trie(char ch){
-		root = new node(ch);
-	}
-
-	// void insertword(node* root,string word){
-	// 	if(word.sz()==0){
-	// 		root->end = true;
-	// 		return;
-	// 	}
-	// 	int ind = word[0] - 'A';
-	// 	node* child;
-	// 	if(root->c[ind] != null){
-	// 		child = root->c[ind];
-	// 	}else{
-	// 		root->c[ind] = new node(word[0]);
-	// 		child = root->c[ind];
-	// 	}
-	// 	insertword(child,word.substr(1));
-	// }
-
-	// void insert(string word){
-	// 	insertword(root,word);
-	// }
-
-	void insert(string word){
-		node* curr = root;
-		fr(i,0,word.sz()){
-			int j = word[i]-'a';
-			if(curr->c[j]==null){
-				curr->c[j] = new node(word[i]);
-				curr->cc++;
-			}
-			curr = curr->c[j];
-		}
-		curr->end = true;
-	}	
-
-	// bool searchword(node* root,string word){
-	// 	if(word.sz()==0){
-	// 		return root->end==true; 
-	// 	}
-	// 	int ind = word[0] - 'A';
-	// 	node* child;
-	// 	if(root->c[ind] != null){
-	// 		child = root->c[ind];
-	// 	}else{
-	// 		return false;
-	// 	}
-	// 	return searchword(child,word.substr(1));
-	// }
-
-	// bool search(string word){
-	// 	return searchword(root,word);
-	// }
-
-	bool search(string word){
-		node* curr = root;
-		fr(i,0,word.sz()){
-			int j = word[i]-'a';
-			if(curr->c[j]==null) return false;
-			curr = curr->c[j];
-		}
-		return curr->end && curr;
-	}
-
-	bool searchprefix(string p){
-		node* curr = root;
-		fr(i,0,p.sz()){
-			int j = p[i]-'a';
-			if(!curr->c[j]) return false;
-			curr = curr->c[j];
-		}
-		return curr;
-	}
-
-	void longestcommonprefix(string s,string& ans){
-		int n = s.sz();
-		node* curr = root;
-		fr(i,0,n){
-			char x = s[i];
-			if(curr->cc==1){
-				ans.pb(x);
-				curr = curr->c[x-'a'];
-			}else{
-				break; 
-			}
-			if(curr->end) break;
-		}
-	}
-
-	bool isempty(node* root){
-		for(int i=0;i<26;i++)
-			if(root->c[i]) return false;
-		return true;
-	}
-	
-	node* Delete(node* root,string s,int d=0){
-		if(!root)
-			return NULL;
-		if(d==s.sz()){
-			if(root->end) root->end = false;
-			if(isempty(root)){
-				delete(root);
-				root = null;
-			}
-			return root;
-		}
-
-		int ci = s[d]-'a';
-		root->c[ci] = Delete(root->c[ci],s,d+1);
-
-		if(isempty(root) && !root->end){
-			delete(root);
-			root=null;
-		}
-		return root;
-	}
-};
+	int l = 2*node +1;
+	int r = 2*node +2;
+	int m = (s+e)/2;
+	build(v,l,s,m);
+	build(v,r,m+1,e);
+	segtree[node] = max(segtree[l],segtree[r]);	
+}
 
 void solve()
 {	
-	Trie* t = new Trie();
-
-	t->insert("yash");
-	t->insert("yashjm");
-
-	cout<<t->search("yash")<<endl;
-	// t->Delete(t->root,"yash");
-	// cout<<t->search("yash")<<endl;
-	// cout<<t->search("yashjm")<<endl;
-
-	// // longest common prefix using the trie
-	// string ans = "";
-	// t->longestcommonprefix("yash",ans);
-	// cout<<ans<<endl;
-
-	// implement the phone directory
-
-	
-
-	
+	int n;cin>>n;
+	vector<int> v(n);
+	fr(i,0,n) cin>>v[i];
+	build(v,0,0,n-1);
+	debugv(segtree,0,2*n-1);
+	int q;cin>>q;
+	while(q--){
+		int a,b;cin>>a>>b;
+		int ans = finder(0,0,n-1,a,b);
+		cout<<ans<<endl;
+	}
 }
 
 int main()

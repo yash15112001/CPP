@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
 using namespace std;
 #define fr(i,a,n) for(auto i=a;i<n;i++)
@@ -66,172 +66,121 @@ template<class T,class V>void _print(map<T,V> s){ cerr<<"[ "; for(auto i:s){ cer
 template<class T,class V>void _print(unordered_map<T,V> s){ cerr<<"[ "; for(auto i:s){ cerr<<"{";_print(i.f); cerr<<","; _print(i.s); cerr<<"} "; } cerr<<"]"; }
 template<class T,class V>void _print(multimap<T,V> s){ cerr<<"[ "; for(auto i:s){ cerr<<"{";_print(i.f); cerr<<","; _print(i.s); cerr<<"} "; } cerr<<"]"; }
 
-// ************ TRIE **************
-
-class node{
-public:
-	char data;
-	node* c[26];
-	int cc;
-	bool end;
-
-	node(char ch){
-		data = ch;
-		fr(i,0,26) c[i]=null;
-		cc=0;
-		end = false;
-	}
-};
-
-class Trie{
-	public:
-	node* root;
-
-	Trie(){
-		root = new node('\0');
-	}
-
-	Trie(char ch){
-		root = new node(ch);
-	}
-
-	// void insertword(node* root,string word){
-	// 	if(word.sz()==0){
-	// 		root->end = true;
-	// 		return;
-	// 	}
-	// 	int ind = word[0] - 'A';
-	// 	node* child;
-	// 	if(root->c[ind] != null){
-	// 		child = root->c[ind];
-	// 	}else{
-	// 		root->c[ind] = new node(word[0]);
-	// 		child = root->c[ind];
-	// 	}
-	// 	insertword(child,word.substr(1));
-	// }
-
-	// void insert(string word){
-	// 	insertword(root,word);
-	// }
-
-	void insert(string word){
-		node* curr = root;
-		fr(i,0,word.sz()){
-			int j = word[i]-'a';
-			if(curr->c[j]==null){
-				curr->c[j] = new node(word[i]);
-				curr->cc++;
-			}
-			curr = curr->c[j];
-		}
-		curr->end = true;
-	}	
-
-	// bool searchword(node* root,string word){
-	// 	if(word.sz()==0){
-	// 		return root->end==true; 
-	// 	}
-	// 	int ind = word[0] - 'A';
-	// 	node* child;
-	// 	if(root->c[ind] != null){
-	// 		child = root->c[ind];
-	// 	}else{
-	// 		return false;
-	// 	}
-	// 	return searchword(child,word.substr(1));
-	// }
-
-	// bool search(string word){
-	// 	return searchword(root,word);
-	// }
-
-	bool search(string word){
-		node* curr = root;
-		fr(i,0,word.sz()){
-			int j = word[i]-'a';
-			if(curr->c[j]==null) return false;
-			curr = curr->c[j];
-		}
-		return curr->end && curr;
-	}
-
-	bool searchprefix(string p){
-		node* curr = root;
-		fr(i,0,p.sz()){
-			int j = p[i]-'a';
-			if(!curr->c[j]) return false;
-			curr = curr->c[j];
-		}
-		return curr;
-	}
-
-	void longestcommonprefix(string s,string& ans){
-		int n = s.sz();
-		node* curr = root;
-		fr(i,0,n){
-			char x = s[i];
-			if(curr->cc==1){
-				ans.pb(x);
-				curr = curr->c[x-'a'];
-			}else{
-				break; 
-			}
-			if(curr->end) break;
-		}
-	}
-
-	bool isempty(node* root){
-		for(int i=0;i<26;i++)
-			if(root->c[i]) return false;
-		return true;
-	}
-	
-	node* Delete(node* root,string s,int d=0){
-		if(!root)
-			return NULL;
-		if(d==s.sz()){
-			if(root->end) root->end = false;
-			if(isempty(root)){
-				delete(root);
-				root = null;
-			}
-			return root;
-		}
-
-		int ci = s[d]-'a';
-		root->c[ci] = Delete(root->c[ci],s,d+1);
-
-		if(isempty(root) && !root->end){
-			delete(root);
-			root=null;
-		}
-		return root;
-	}
-};
+void f(int n){
+	if(n)f(n>>1);
+	cout<<n%2;
+}
 
 void solve()
 {	
-	Trie* t = new Trie();
+	// jth bit of i : i&(1<<j)>0?1:0;
+	// set jth bit of i : i=i|(1<<j);
+	// unset jth bit of i : i=i&(~(1<<j));
+	// toggle bit : 0->1->0 : i&(1<<j)>0?(i=i&(~(1<<j))):(i=i|(1<<j))
+	// is power of 2 : i&&(!(i&(i-1))) , __builtin_popcount(i)==1
+	// bitset<5> b(10);
+	// cout<<b<<endl;
 
-	t->insert("yash");
-	t->insert("yashjm");
+	// >> -> right shift : n=n/2;
+	// << -> left shift : n=2*n;
+	// x<<n -> x=x*(2^n)
+	// x>>n -> x=x/(2^n)
 
-	cout<<t->search("yash")<<endl;
-	// t->Delete(t->root,"yash");
-	// cout<<t->search("yash")<<endl;
-	// cout<<t->search("yashjm")<<endl;
+	// 7*x/2 = (x<<3 - x)>>1
+	// cout<< ((4*(1<<3)-4)>>1) <<endl;
+	// int x;cin>>x;
+	// cout<<(((x<<6)+(x<<5)+x)>>1)<<" "<<x+(x>>1)+(x<<1)<<endl;
+	// f(10);
 
-	// // longest common prefix using the trie
-	// string ans = "";
-	// t->longestcommonprefix("yash",ans);
+	// right most set bit : n&(~(n-1))
+
+	// n-1 without -,+,/,*
+
+	// int n;cin>>n;
+	// int t=0,m=1;
+	// while(!(n&m)){
+	// 	t|=m;
+	// 	m=m<<1;
+	// }
+	// n = (n&(~m))|t;
+	// cout<<n<<endl;
+
+	// n+1 without -,+,*,/
+
+	// int n;cin>>n;
+	// int m=1;
+	// int x=((1<<30)-1);
+	// while(n&m){
+	// 	m=m<<1;
+	// 	x=x&(~(m-1));
+	// }
+	// n=(n&x)|m;
+	// cout<<n;
+
+	// x*y without *
+	// int n,m;cin>>n>>m;
+	// int ans=0;
+	// while(m){
+	// 	if(m&1) ans+=n;
+	// 	n=n<<1;
+	// 	m=m>>1;
+	// }
 	// cout<<ans<<endl;
 
-	// implement the phone directory
+	// x/y without /
+	// int n,m;cin>>n>>m;
+	// int ans = pow(-1,(n<0)+(m<0))*exp(log(n)-log(m));
+	// cout<<ans<<endl;
 
-	
+	// int n;cin>>n;
+	// vector<int> v(n);
+	// fr(i,0,n) cin>>v[i];
+	// int x=0;
+	// for(auto e:v) x=x^e;
 
-	
+	// int j=x&(~(x-1));
+	// int a,b;a=b=0;
+	// for(auto e:v){
+	// 	if(e&j)
+	// 		a=a^e;
+	// }
+	// cout<<(x^a)<<" "<<endl;
+	// cout<<a<<" "<<endl;
+
+	// int n;cin>>n;
+	// vector<int> v(n);
+	// fr(i,0,n) cin>>v[i];
+	// vector<int> d(32,0);
+	// for(auto e:v){
+	// 	for(int i=0;i<=31;i++){
+	// 		if(e&(1<<i))d[i]=(d[i]+1)%3;
+	// 	}
+	// }
+	// int ans=0;
+	// fr(i,0,32){
+	// 	if(d[i]==1)
+	// 		ans+=(1<<i);
+	// }
+	// cout<<ans<<endl;
+
+	// int n;cin>>n;
+	// int m=n;
+	// int ans=0;
+	// while(m){
+	// 	if(m&1)
+	// 		ans+=n;
+	// 	n=n<<1;
+	// 	m=m>>1;
+	// }
+	// cout<<ans<<endl;
+
+	int x,y,l,r;cin>>x>>y>>l>>r;
+	for(int i=0;i<32;i++){
+		if(i+1>=l && i+1<=r && y&(1<<i))
+			x=x|(1<<i);
+	}
+	cout<<x<<endl;
+
 }
 
 int main()

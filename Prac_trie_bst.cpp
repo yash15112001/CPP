@@ -66,143 +66,73 @@ template<class T,class V>void _print(map<T,V> s){ cerr<<"[ "; for(auto i:s){ cer
 template<class T,class V>void _print(unordered_map<T,V> s){ cerr<<"[ "; for(auto i:s){ cerr<<"{";_print(i.f); cerr<<","; _print(i.s); cerr<<"} "; } cerr<<"]"; }
 template<class T,class V>void _print(multimap<T,V> s){ cerr<<"[ "; for(auto i:s){ cerr<<"{";_print(i.f); cerr<<","; _print(i.s); cerr<<"} "; } cerr<<"]"; }
 
-// ************ TRIE **************
-
 class node{
-public:
+public:	
 	char data;
 	node* c[26];
-	int cc;
 	bool end;
 
-	node(char ch){
-		data = ch;
+	node(){
+		data='\0';
 		fr(i,0,26) c[i]=null;
-		cc=0;
-		end = false;
+		end=false;
+	}
+
+	node(char ch){
+		data=ch;
+		fr(i,0,26) c[i]=null;
+		end=false;
 	}
 };
 
 class Trie{
-	public:
+public:
 	node* root;
-
 	Trie(){
 		root = new node('\0');
 	}
-
 	Trie(char ch){
 		root = new node(ch);
 	}
-
-	// void insertword(node* root,string word){
-	// 	if(word.sz()==0){
-	// 		root->end = true;
-	// 		return;
-	// 	}
-	// 	int ind = word[0] - 'A';
-	// 	node* child;
-	// 	if(root->c[ind] != null){
-	// 		child = root->c[ind];
-	// 	}else{
-	// 		root->c[ind] = new node(word[0]);
-	// 		child = root->c[ind];
-	// 	}
-	// 	insertword(child,word.substr(1));
-	// }
-
-	// void insert(string word){
-	// 	insertword(root,word);
-	// }
-
-	void insert(string word){
-		node* curr = root;
-		fr(i,0,word.sz()){
-			int j = word[i]-'a';
-			if(curr->c[j]==null){
-				curr->c[j] = new node(word[i]);
-				curr->cc++;
-			}
-			curr = curr->c[j];
+	void insert(string s){
+		node* t=root;
+		fr(i,0,s.sz()){
+			int j=s[i]-'a';
+			if(t->c[j]==null)
+				t->c[j]=new node(s[i]);
+			t=t->c[j];
 		}
-		curr->end = true;
-	}	
-
-	// bool searchword(node* root,string word){
-	// 	if(word.sz()==0){
-	// 		return root->end==true; 
-	// 	}
-	// 	int ind = word[0] - 'A';
-	// 	node* child;
-	// 	if(root->c[ind] != null){
-	// 		child = root->c[ind];
-	// 	}else{
-	// 		return false;
-	// 	}
-	// 	return searchword(child,word.substr(1));
-	// }
-
-	// bool search(string word){
-	// 	return searchword(root,word);
-	// }
-
-	bool search(string word){
-		node* curr = root;
-		fr(i,0,word.sz()){
-			int j = word[i]-'a';
-			if(curr->c[j]==null) return false;
-			curr = curr->c[j];
-		}
-		return curr->end && curr;
+		t->end=true;
 	}
-
-	bool searchprefix(string p){
-		node* curr = root;
-		fr(i,0,p.sz()){
-			int j = p[i]-'a';
-			if(!curr->c[j]) return false;
-			curr = curr->c[j];
+	bool search(string s){
+		node* t=root;
+		fr(i,0,s.sz()){
+			int j=s[i]-'a';
+			if(t->c[j]==null)
+				return false;
+			t=t->c[j];
 		}
-		return curr;
+		return t&&t->end;
 	}
-
-	void longestcommonprefix(string s,string& ans){
-		int n = s.sz();
-		node* curr = root;
-		fr(i,0,n){
-			char x = s[i];
-			if(curr->cc==1){
-				ans.pb(x);
-				curr = curr->c[x-'a'];
-			}else{
-				break; 
-			}
-			if(curr->end) break;
-		}
-	}
-
 	bool isempty(node* root){
-		for(int i=0;i<26;i++)
-			if(root->c[i]) return false;
+		fr(i,0,26)
+			if(root->c[i])
+				return false;
 		return true;
 	}
-	
 	node* Delete(node* root,string s,int d=0){
-		if(!root)
-			return NULL;
+		if(!root) return NULL;
 		if(d==s.sz()){
 			if(root->end) root->end = false;
 			if(isempty(root)){
 				delete(root);
-				root = null;
+				root=null;
 			}
 			return root;
 		}
-
-		int ci = s[d]-'a';
-		root->c[ci] = Delete(root->c[ci],s,d+1);
-
-		if(isempty(root) && !root->end){
+		int ci=s[d]-'a';
+		root->c[ci]=Delete(root->c[ci],s,d+1);
+		if(isempty(root) && root->end==0){
 			delete(root);
 			root=null;
 		}
@@ -210,28 +140,18 @@ class Trie{
 	}
 };
 
+
 void solve()
 {	
 	Trie* t = new Trie();
-
 	t->insert("yash");
-	t->insert("yashjm");
-
+	t->insert("yashvi");
+	t->insert("raj");
+	t->insert("rajesh");
+	
+	t->Delete(t->root,"yash");
+	cout<<t->search("yashvi")<<endl;
 	cout<<t->search("yash")<<endl;
-	// t->Delete(t->root,"yash");
-	// cout<<t->search("yash")<<endl;
-	// cout<<t->search("yashjm")<<endl;
-
-	// // longest common prefix using the trie
-	// string ans = "";
-	// t->longestcommonprefix("yash",ans);
-	// cout<<ans<<endl;
-
-	// implement the phone directory
-
-	
-
-	
 }
 
 int main()

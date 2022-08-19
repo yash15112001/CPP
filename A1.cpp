@@ -340,63 +340,52 @@ template<class T,class V>void _print(multimap<T,V> s){ cerr<<"[ "; for(auto i:s)
 // 	return s.substr(0,j);
 // }
 
-string stringaddition(string s1,string s2){
-	string ans="";     
-	int carry=0;        
-	int n = s1.size(), m = s2.size();                
-	reverse(s1.begin(),s1.end());
-	reverse(s2.begin(),s2.end());
-	debug(s1)
-	debug(s2)
-	string d = (max(n,m)==n?s1:s2);
+// string stringaddition(string s1,string s2){
+// 	string ans="";     
+// 	int carry=0;        
+// 	int n = s1.size(), m = s2.size();                
+// 	reverse(s1.begin(),s1.end());
+// 	reverse(s2.begin(),s2.end());
+// 	debug(s1)
+// 	debug(s2)
+// 	string d = (max(n,m)==n?s1:s2);
 
-	int i=0;
-	while(i<min(n,m)){
-		int x = (s1[i]-'0'+s2[i]-'0'+carry);
-		int y = x%10;
-		char seek = char((int)'0'+y);
-		carry = x/10;
-		i++;
-		ans+=seek;
-	}
+// 	int i=0;
+// 	while(i<min(n,m)){
+// 		int x = (s1[i]-'0'+s2[i]-'0'+carry);
+// 		int y = x%10;
+// 		char seek = char((int)'0'+y);
+// 		carry = x/10;
+// 		i++;
+// 		ans+=seek;
+// 	}
 
-	while(i<max(m,n)){
-		if(d==s1){
-			int x = (s1[i]-'0'+carry);
-			int y = x%10;
-			char seek = char((int)'0'+y);
-			carry = x/10;
-			i++;
-			ans+=seek;
-		}else{
-			int x = (s2[i]-'0'+carry);
-			int y = x%10;
-			char seek = char((int)'0'+y);
-			carry = x/10;
-			i++;
-			ans+=seek;
-		}
-	}
+// 	while(i<max(m,n)){
+// 		if(d==s1){
+// 			int x = (s1[i]-'0'+carry);
+// 			int y = x%10;
+// 			char seek = char((int)'0'+y);
+// 			carry = x/10;
+// 			i++;
+// 			ans+=seek;
+// 		}else{
+// 			int x = (s2[i]-'0'+carry);
+// 			int y = x%10;
+// 			char seek = char((int)'0'+y);
+// 			carry = x/10;
+// 			i++;
+// 			ans+=seek;
+// 		}
+// 	}
 
-	if(carry!=0) ans+=(char((int)'0'+carry));
+// 	if(carry!=0) ans+=(char((int)'0'+carry));
      
-	reverse(ans.begin(),ans.end());
-    i=0;
-    while(i<ans.size() && ans[i]=='0')
-        i++;
-    return ans.substr(i); 
-}
-
-
-
-
-
-
-
-
-
-
-
+// 	reverse(ans.begin(),ans.end());
+//     i=0;
+//     while(i<ans.size() && ans[i]=='0')
+//         i++;
+//     return ans.substr(i); 
+// }
 
 void solve()
 {	
@@ -1076,7 +1065,7 @@ void solve()
 	// 			}
 	// 		}else{
 	// 			// if in queue -> remove from queue and map and ans++;
-	// 			// else insert in queue ans map
+	// 			// else insert in queue and map
 	// 			if(waiting.find(c)!=waiting.end()){
 	// 				waiting.erase(c);
 	// 				// remove from queue
@@ -1100,7 +1089,7 @@ void solve()
 	// } // O(N*N) , O(N)
 	// cout<<ans<<endl;
 
-	// 2**customer wont wait
+	// 2**customer won't wait
 	// int n;cin>>n;
 	// string s;cin>>s;
 	
